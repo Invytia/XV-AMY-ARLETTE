@@ -8,17 +8,18 @@
     <style>
         :root {
             /* Paleta La Bella y la Bestia */
-            --bg-cream: #FCFBF8;       
-            --bg-dark-magic: #0D0E15;  
+            --bg-cream: rgba(252, 251, 248, 0.92);       
+            --bg-dark-magic: rgba(13, 14, 21, 0.92);  
+            --bg-red: rgba(100, 0, 0, 0.92);
             --gold-primary: #D4AF37; 
             --gold-light: #F3E5AB;
             --red-rose: #8B0000;
             --red-rose-light: #A81C1C;
             --text-dark: #2A2A2A;      
-            --text-muted: #555555;
+            --text-muted: #4a4a4a;
             --text-light: #F9F9F9;
             
-            --transition-smooth: cubic-bezier(0.25, 1, 0.5, 1);
+            --transition-smooth: cubic-bezier(0.22, 1, 0.36, 1); /* Transición más elegante */
         }
 
         * {
@@ -30,13 +31,36 @@
         body, html {
             width: 100%;
             font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg-cream);
+            background-color: #0D0E15; /* Fondo de respaldo */
             color: var(--text-dark);
             overflow-x: hidden;
             scroll-behavior: smooth;
         }
 
-        /* --- EFECTOS MÁGICOS (SPARKLES Y BRILLOS) --- */
+        /* --- FONDOS CON IMÁGENES --- */
+        #envelope-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            /* Imagen de fondo del sobre */
+            background-image: url('assets/fondo.jpg');
+            background-size: cover; /* Cubre sin deformar */
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1.5s ease-in-out, visibility 1.5s;
+        }
+
+        #main-invitation {
+            display: none; width: 100%; flex-direction: column; align-items: center;
+            /* Imagen de fondo del cuerpo */
+            background-image: url('assets/f2.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Efecto parallax */
+            background-repeat: no-repeat;
+            opacity: 0; animation: fadeInMain 2.5s forwards 0.5s;
+        }
+
+        /* --- EFECTOS MÁGICOS --- */
         .magic-sparkle {
             position: absolute;
             background: radial-gradient(circle, #fff 0%, var(--gold-primary) 40%, transparent 70%);
@@ -49,300 +73,207 @@
 
         @keyframes twinkle {
             0% { transform: scale(0.5); opacity: 0.2; }
-            100% { transform: scale(1.5); opacity: 0.8; box-shadow: 0 0 10px var(--gold-light); }
+            100% { transform: scale(1.5); opacity: 0.8; box-shadow: 0 0 12px var(--gold-light); }
         }
 
-        .glow-text {
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-        }
+        .glow-text { text-shadow: 0 0 15px rgba(212, 175, 55, 0.6); }
 
         /* --- REPRODUCTOR DE MÚSICA --- */
         .sticky-music-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 55px;
-            height: 55px;
+            position: fixed; bottom: 30px; right: 30px;
+            width: 55px; height: 55px;
             background: linear-gradient(135deg, var(--gold-primary), #B8860B);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-            z-index: 2000;
-            cursor: pointer;
-            opacity: 0;
-            visibility: hidden;
+            z-index: 2000; cursor: pointer; opacity: 0; visibility: hidden;
             transform: translateY(20px) scale(0.9);
             transition: all 0.6s var(--transition-smooth);
-            border: 2px solid var(--gold-light);
-            outline: none;
+            border: 2px solid var(--gold-light); outline: none;
         }
 
-        body.content-active .sticky-music-btn {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0) scale(1);
-        }
-
-        .sticky-music-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
-        }
-
+        body.content-active .sticky-music-btn { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .sticky-music-btn:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(212, 175, 55, 0.8); }
         .sticky-music-btn svg { width: 22px; height: 22px; fill: #fff; }
 
         /* --- SOBRE (BLANCO) --- */
-        #envelope-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-cream); 
-            z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1.2s ease-in-out, visibility 1.2s;
-        }
-
         #envelope-screen.fade-out { opacity: 0; visibility: hidden; pointer-events: none; }
 
         .envelope-text-container {
             text-align: center; margin-bottom: 50px;
-            animation: floatText 4s ease-in-out infinite;
-            position: relative; z-index: 10;
+            animation: floatText 4s ease-in-out infinite; position: relative; z-index: 10;
         }
 
-        .env-tag {
-            font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 8px;
-            text-transform: uppercase; color: var(--gold-primary); font-weight: 600;
-        }
-
-        .env-title {
-            font-family: 'Great Vibes', cursive; font-size: 85px;
-            color: var(--red-rose); line-height: 1.2; margin-top: 5px;
-            text-shadow: 0 0 10px rgba(139, 0, 0, 0.2);
-        }
+        .env-tag { font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 8px; text-transform: uppercase; color: var(--gold-primary); font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .env-title { font-family: 'Great Vibes', cursive; font-size: 85px; color: #fff; line-height: 1.2; margin-top: 5px; text-shadow: 0 4px 15px rgba(0,0,0,0.4); }
 
         .envelope-wrapper { position: relative; cursor: pointer; transition: transform 0.6s var(--transition-smooth); z-index: 10; }
         .envelope-wrapper:hover { transform: translateY(-8px); }
 
-        /* Sobre Blanco Minimalista */
         .envelope {
             position: relative; width: 320px; height: 210px;
             background-color: #FFFFFF; border-radius: 2px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1); 
-            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2); 
+            border: 1px solid rgba(212, 175, 55, 0.4);
         }
 
-        .envelope::before {
-            content: ''; position: absolute; top: 0; right: 0;
-            border-right: 160px solid #f9f9f9; border-top: 105px solid transparent;
-            border-bottom: 105px solid #f9f9f9; z-index: 2;
-        }
-        
-        .envelope::after {
-            content: ''; position: absolute; top: 0; left: 0;
-            border-left: 160px solid #f4f4f4; border-top: 105px solid transparent;
-            border-bottom: 105px solid #f4f4f4; z-index: 2;
-        }
+        .envelope::before { content: ''; position: absolute; top: 0; right: 0; border-right: 160px solid #f9f9f9; border-top: 105px solid transparent; border-bottom: 105px solid #f9f9f9; z-index: 2; }
+        .envelope::after { content: ''; position: absolute; top: 0; left: 0; border-left: 160px solid #f4f4f4; border-top: 105px solid transparent; border-bottom: 105px solid #f4f4f4; z-index: 2; }
 
         .front-flap {
             position: absolute; top: 0; left: 0;
             border-left: 160px solid transparent; border-right: 160px solid transparent;
             border-top: 115px solid #FFFFFF; transform-origin: top;
-            transition: transform 0.9s var(--transition-smooth); z-index: 4;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.05));
+            transition: transform 1s var(--transition-smooth); z-index: 4;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
 
         .envelope-wrapper.open .front-flap { transform: rotateX(180deg); z-index: 1; }
 
         .wax-seal {
             position: absolute; top: 90px; left: 50%; transform: translateX(-50%);
-            width: 50px; height: 50px; background: radial-gradient(circle, var(--red-rose-light), var(--red-rose));
+            width: 55px; height: 55px; background: radial-gradient(circle, var(--gold-light), var(--gold-primary));
             border-radius: 50%; z-index: 5; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.5); 
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.6); 
             transition: opacity 0.5s ease 0.1s, transform 0.5s ease;
-            border: 2px solid var(--gold-primary);
         }
         
-        .wax-seal svg { width: 26px; height: 26px; fill: var(--gold-light); }
+        /* ICONO DE CORONA */
+        .wax-seal svg { width: 30px; height: 30px; fill: #fff; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2)); }
         .envelope-wrapper.open .wax-seal { opacity: 0; transform: translateX(-50%) scale(0.5); pointer-events: none; }
 
-        .hint-text {
-            text-align: center; font-size: 11px; font-weight: 500; text-transform: uppercase; 
-            letter-spacing: 4px; color: var(--gold-primary); margin-top: 40px; 
-            animation: pulse 2.5s infinite;
-        }
+        .hint-text { text-align: center; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 4px; color: #fff; margin-top: 40px; animation: pulse 2.5s infinite; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
 
         @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
         @keyframes floatText { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
 
         /* --- CONTENIDO PRINCIPAL --- */
-        #main-invitation {
-            display: none; width: 100%; flex-direction: column; align-items: center;
-            opacity: 0; animation: fadeInMain 2s forwards 0.3s;
-        }
-        
         body.content-active #main-invitation { display: flex; }
         @keyframes fadeInMain { to { opacity: 1; } }
 
-        /* Animaciones On-Scroll */
-        .anim-element { opacity: 0; transition: all 1.2s var(--transition-smooth); position: relative; z-index: 2; }
-        .anim-fade-up { transform: translateY(40px); }
-        .anim-fade-up.in-view { opacity: 1; transform: translateY(0); }
-        .anim-zoom { transform: scale(0.92); }
-        .anim-zoom.in-view { opacity: 1; transform: scale(1); }
+        /* --- NUEVAS ANIMACIONES CINEMÁTICAS --- */
+        .anim-element { 
+            opacity: 0; 
+            transform: translateY(60px) scale(0.95); 
+            filter: blur(12px);
+            transition: all 1.5s var(--transition-smooth); 
+            position: relative; z-index: 2; 
+        }
+        .anim-element.in-view { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+            filter: blur(0);
+        }
 
         .delay-1 { transition-delay: 0.1s; }
-        .delay-2 { transition-delay: 0.25s; }
-        .delay-3 { transition-delay: 0.4s; }
-        .delay-4 { transition-delay: 0.55s; }
+        .delay-2 { transition-delay: 0.3s; }
+        .delay-3 { transition-delay: 0.5s; }
+        .delay-4 { transition-delay: 0.7s; }
 
-        /* Secciones Alternadas */
+        /* --- DECORACIONES FLORALES --- */
+        .floral-corner {
+            position: absolute; pointer-events: none; z-index: 1; opacity: 0.85; max-width: 220px;
+            animation: gentleFloat 6s ease-in-out infinite;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
+        }
+        @keyframes gentleFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        /* Secciones Translúcidas (Dejan ver el fondo) */
         .section-block {
-            width: 100%; padding: 110px 20px; display: flex; flex-direction: column; align-items: center; text-align: center;
-            position: relative; overflow: hidden;
+            width: 100%; padding: 120px 20px; display: flex; flex-direction: column; align-items: center; text-align: center;
+            position: relative; overflow: hidden; backdrop-filter: blur(4px); /* Difumina ligeramente la imagen detrás */
+            -webkit-backdrop-filter: blur(4px);
         }
+        .bg-cream { background-color: var(--bg-cream); border-top: 1px solid rgba(255,255,255,0.3); border-bottom: 1px solid rgba(255,255,255,0.3); }
+        .bg-dark { background-color: var(--bg-dark-magic); color: var(--text-light); border-top: 1px solid rgba(212,175,55,0.1); border-bottom: 1px solid rgba(212,175,55,0.1); }
+        .bg-red { background: linear-gradient(135deg, rgba(139,0,0,0.95), rgba(60,0,0,0.95)); color: var(--text-light); }
 
-        .bg-cream { background-color: var(--bg-cream); }
-        .bg-dark { background-color: var(--bg-dark-magic); color: var(--text-light); }
-        .bg-red { background: linear-gradient(135deg, var(--red-rose), #4a0000); color: var(--text-light); }
-
-        /* Tipografía Editorial Mágica */
-        .tag-line {
-            font-family: 'Cinzel', serif; font-size: 14px; letter-spacing: 5px;
-            text-transform: uppercase; color: var(--gold-primary); margin-bottom: 25px; font-weight: 600;
-        }
-
-        .title-script {
-            font-family: 'Great Vibes', cursive; font-size: 90px;
-            color: var(--red-rose); margin-bottom: 20px; line-height: 1.1; font-weight: 400;
-        }
-
+        /* Tipografía Editorial */
+        .tag-line { font-family: 'Cinzel', serif; font-size: 15px; letter-spacing: 5px; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 25px; font-weight: 600; }
+        .title-script { font-family: 'Great Vibes', cursive; font-size: 95px; color: var(--red-rose); margin-bottom: 20px; line-height: 1.1; font-weight: 400; }
         .bg-dark .title-script, .bg-red .title-script { color: var(--gold-primary); }
-
-        .body-serif {
-            font-family: 'Cormorant Garamond', serif; font-size: 24px;
-            line-height: 1.6; color: var(--text-muted); font-style: italic;
-            max-width: 600px; padding: 0 15px; font-weight: 400;
-        }
-
+        
+        .body-serif { font-family: 'Cormorant Garamond', serif; font-size: 24px; line-height: 1.6; color: var(--text-muted); font-style: italic; max-width: 600px; padding: 0 15px; font-weight: 400; }
         .bg-dark .body-serif, .bg-red .body-serif { color: #dcdcdc; }
 
         .line-divider { width: 1px; height: 60px; background-color: var(--gold-primary); margin: 35px auto; box-shadow: 0 0 10px var(--gold-primary); }
         .line-horizontal { width: 80px; height: 1px; background-color: var(--gold-primary); margin: 40px auto; box-shadow: 0 0 10px var(--gold-primary); }
 
-        /* Marcos y Decoraciones */
-        .photo-frame {
-            width: 100%; max-width: 420px; margin: 40px auto;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); border-radius: 5px 50px 5px 50px;
-            overflow: hidden; border: 4px solid var(--gold-primary); position: relative; z-index: 2;
-        }
-        .photo-frame img { width: 100%; display: block; filter: contrast(1.05) saturate(1.1); transition: transform 0.6s ease; }
-        .photo-frame:hover img { transform: scale(1.05); }
+        /* Marcos de Fotos */
+        .photo-frame { width: 100%; max-width: 420px; margin: 40px auto; box-shadow: 0 25px 60px rgba(0,0,0,0.35); border-radius: 5px 50px 5px 50px; overflow: hidden; border: 3px solid var(--gold-primary); position: relative; z-index: 2; }
+        .photo-frame img { width: 100%; display: block; filter: contrast(1.05) saturate(1.1); transition: transform 1.2s var(--transition-smooth); }
+        .photo-frame:hover img { transform: scale(1.08); }
 
-        .floral-corner {
-            position: absolute; pointer-events: none; z-index: 0; opacity: 0.6; max-width: 250px;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3)); transition: opacity 1.5s ease;
-        }
-
-        /* Información Textual */
-        .info-title {
-            font-family: 'Cinzel', serif; font-size: 15px; letter-spacing: 4px; line-height: 1.4;
-            text-transform: uppercase; color: var(--gold-primary); margin-bottom: 15px; font-weight: 700;
-        }
-
-        .info-data {
-            font-family: 'Cormorant Garamond', serif; font-size: 36px;
-            color: var(--red-rose); margin-bottom: 5px; font-weight: 500; line-height: 1.3;
-        }
-
+        /* Textos de Información */
+        .info-title { font-family: 'Cinzel', serif; font-size: 15px; letter-spacing: 4px; line-height: 1.4; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 15px; font-weight: 700; }
+        .info-data { font-family: 'Cormorant Garamond', serif; font-size: 38px; color: var(--red-rose); margin-bottom: 5px; font-weight: 500; line-height: 1.3; }
         .bg-dark .info-data, .bg-red .info-data { color: var(--text-light); }
 
-        /* Itinerario */
-        .itinerary-grid {
-            display: grid; grid-template-columns: 1fr; gap: 30px;
-            max-width: 500px; width: 100%; margin: 40px auto;
-        }
+        /* --- CUENTA REGRESIVA Y CALENDARIO --- */
+        .countdown-container { display: flex; justify-content: center; gap: 20px; margin: 30px auto; }
+        .countdown-item { display: flex; flex-direction: column; align-items: center; }
+        .countdown-num { font-family: 'Cinzel', serif; font-size: 45px; font-weight: 700; color: var(--gold-primary); line-height: 1; text-shadow: 0 0 10px rgba(212,175,55,0.4); }
+        .countdown-label { font-family: 'Montserrat', sans-serif; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-top: 8px; }
+        .bg-dark .countdown-label { color: #aaa; }
 
-        .itinerary-item {
-            display: flex; flex-direction: column; align-items: center;
-            background: rgba(255, 255, 255, 0.03); padding: 20px; border-radius: 10px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            position: relative; overflow: hidden;
-        }
+        .calendar-wrapper { width: 100%; max-width: 360px; margin: 40px auto; padding: 40px 25px; background: rgba(255, 255, 255, 0.95); border-radius: 5px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); border: 1px solid rgba(212,175,55,0.3); position: relative; z-index: 2; }
+        .calendar-month { font-family: 'Cinzel', serif; font-size: 22px; color: var(--red-rose); text-transform: uppercase; letter-spacing: 4px; margin-bottom: 30px; font-weight: 600; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; width: 100%; }
+        .cal-header { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 600; color: var(--gold-primary); padding-bottom: 12px; }
+        .cal-day { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--text-muted); display: flex; justify-content: center; align-items: center; aspect-ratio: 1; }
+        .cal-day.active { background: linear-gradient(135deg, var(--gold-primary), #B8860B); color: #fff; border-radius: 50%; font-weight: 600; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.5); }
 
-        .bg-cream .itinerary-item { background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-
-        .itinerary-icon {
-            width: 50px; height: 50px; background: var(--gold-primary); border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; margin-bottom: 15px;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
-        }
-        .itinerary-icon svg { width: 25px; height: 25px; fill: #fff; }
-
-        .itinerary-time { font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold-primary); font-weight: 600; margin-bottom: 5px; }
-        .itinerary-desc { font-family: 'Cormorant Garamond', serif; font-size: 24px; color: inherit; }
+        /* --- ITINERARIO (TIMELINE ELEGANTE) --- */
+        .timeline-container { position: relative; max-width: 400px; margin: 60px auto; padding-left: 50px; text-align: left; }
+        .timeline-line { position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, transparent, var(--gold-primary), var(--gold-primary), transparent); opacity: 0.6; }
+        
+        .timeline-item { position: relative; margin-bottom: 50px; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        
+        .timeline-icon { position: absolute; left: -50px; top: 0; width: 50px; height: 50px; background: var(--bg-dark-magic); border: 2px solid var(--gold-primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 15px rgba(212,175,55,0.4); z-index: 2; }
+        .timeline-icon svg { width: 22px; height: 22px; fill: var(--gold-primary); }
+        
+        .timeline-content { padding-left: 20px; padding-top: 2px; }
+        .timeline-time { font-family: 'Cinzel', serif; font-size: 22px; color: var(--gold-primary); font-weight: 600; margin-bottom: 5px; letter-spacing: 2px; }
+        .timeline-desc { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--text-light); }
 
         /* Botones */
-        .btn-solid {
-            display: inline-block; background: linear-gradient(135deg, var(--gold-primary), #B8860B); color: #fff;
-            padding: 17px 35px; font-family: 'Montserrat', sans-serif; font-size: 12px;
-            font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
-            text-decoration: none; border: none; cursor: pointer; border-radius: 30px;
-            transition: all 0.4s ease; margin-top: 30px; position: relative; z-index: 5;
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); border: 1px solid var(--gold-light);
-        }
-        .btn-solid:hover { background: linear-gradient(135deg, #B8860B, var(--gold-primary)); transform: translateY(-3px); box-shadow: 0 15px 25px rgba(212, 175, 55, 0.5); }
+        .btn-solid { display: inline-block; background: linear-gradient(135deg, var(--gold-primary), #B8860B); color: #fff; padding: 18px 40px; font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; text-decoration: none; border: none; cursor: pointer; border-radius: 50px; transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); margin-top: 30px; position: relative; z-index: 5; box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4); border: 1px solid var(--gold-light); }
+        .btn-solid:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.6); filter: brightness(1.1); }
 
         /* Mapas */
-        .map-box {
-            width: 100%; max-width: 550px; height: 320px; margin: 30px auto;
-            overflow: hidden; border-radius: 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); 
-            border: 2px solid var(--gold-primary); position: relative; z-index: 2;
-        }
+        .map-box { width: 100%; max-width: 550px; height: 320px; margin: 30px auto; overflow: hidden; border-radius: 10px; box-shadow: 0 15px 40px rgba(0,0,0,0.2); border: 2px solid var(--gold-primary); position: relative; z-index: 2; }
         .map-box iframe { width: 100%; height: 100%; border: none; }
 
         /* Formularios RSVP */
-        .form-group { width: 100%; max-width: 400px; margin: 0 auto 20px auto; position: relative; z-index: 2; }
-        
-        .input-line {
-            width: 100%; padding: 18px 0; background: transparent; border: none;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.5); color: inherit;
-            font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 400; outline: none;
-            text-align: center; transition: border-color 0.4s;
-        }
+        .form-group { width: 100%; max-width: 400px; margin: 0 auto 25px auto; position: relative; z-index: 2; }
+        .input-line { width: 100%; padding: 18px 0; background: transparent; border: none; border-bottom: 1px solid rgba(212, 175, 55, 0.5); color: inherit; font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 400; outline: none; text-align: center; transition: all 0.4s; }
         .bg-dark .input-line { color: #fff; }
-        .input-line:focus { border-bottom-color: var(--gold-primary); }
+        .input-line:focus { border-bottom-color: var(--gold-primary); background: rgba(212,175,55,0.05); }
         .input-line::placeholder { color: #A0A0A0; font-style: normal; }
-        
         textarea.input-line { resize: vertical; min-height: 90px; }
         select.input-line { appearance: none; text-align-last: center; cursor: pointer; }
-        .bg-dark select.input-line option { background: var(--bg-dark-magic); color: #fff; }
+        .bg-dark select.input-line option { background: #0D0E15; color: #fff; }
 
         /* Boleto Pase VIP */
-        .ticket-card {
-            width: 100%; max-width: 380px; margin: 30px auto; background: linear-gradient(145deg, #1A1A1A, #000);
-            padding: 50px 25px; position: relative; text-align: center; color: #fff;
-            border-radius: 10px; box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
-            border: 2px solid var(--gold-primary); z-index: 2;
-        }
-
-        .ticket-card::before, .ticket-card::after {
-            content: ''; position: absolute; top: 60%; transform: translateY(-50%);
-            width: 30px; height: 30px; background-color: var(--bg-dark-magic); border-radius: 50%;
-            border: 2px solid var(--gold-primary);
-        }
+        .ticket-card { width: 100%; max-width: 380px; margin: 30px auto; background: linear-gradient(145deg, rgba(26,26,26,0.95), rgba(0,0,0,0.95)); padding: 50px 25px; position: relative; text-align: center; color: #fff; border-radius: 10px; box-shadow: 0 20px 50px rgba(212, 175, 55, 0.25); border: 1px solid var(--gold-primary); z-index: 2; backdrop-filter: blur(5px); }
+        .ticket-card::before, .ticket-card::after { content: ''; position: absolute; top: 60%; transform: translateY(-50%); width: 30px; height: 30px; background-color: var(--bg-dark-magic); border: 1px solid var(--gold-primary); border-radius: 50%; }
         .ticket-card::before { left: -15px; border-left: none; border-top: none; transform: translateY(-50%) rotate(45deg); }
         .ticket-card::after { right: -15px; border-right: none; border-bottom: none; transform: translateY(-50%) rotate(45deg); }
 
-        /* Responsive Móvil */
         @media (max-width: 400px) {
-            .env-title { font-size: 70px; }
-            .title-script { font-size: 75px; }
-            .section-block { padding: 80px 15px; }
-            .info-data { font-size: 30px; }
+            .env-title { font-size: 65px; }
+            .title-script { font-size: 80px; }
+            .section-block { padding: 90px 15px; }
+            .info-data { font-size: 32px; }
             .map-box { height: 260px; }
             .envelope { width: 300px; height: 195px; }
             .envelope::before, .envelope::after { border-left-width: 150px; border-right-width: 150px; border-top-width: 97px; border-bottom-width: 97px; }
             .front-flap { border-left-width: 150px; border-right-width: 150px; border-top-width: 105px; }
-            .floral-corner { max-width: 180px; }
+            .floral-corner { max-width: 160px; }
         }
     </style>
 </head>
@@ -351,13 +282,12 @@
     <!-- AUDIO OCULTO -->
     <audio id="bg-music" src="assets/beauty-beast-song.mp3" loop></audio>
 
-    <!-- BOTÓN STICKY DE MÚSICA -->
     <button id="music-btn" class="sticky-music-btn" onclick="toggleMusic()" aria-label="Controlar música">
         <svg id="music-icon-play" style="display:none;" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         <svg id="music-icon-pause" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
     </button>
 
-    <!-- PANTALLA INICIAL DEL SOBRE -->
+    <!-- SOBRE -->
     <div id="envelope-screen">
         <div class="envelope-text-container">
             <div class="env-tag">Mis XV Años</div>
@@ -367,261 +297,271 @@
         <div class="envelope-wrapper" onclick="openEnvelope()">
             <div class="front-flap"></div>
             <div class="wax-seal">
-                <!-- Icono de Rosa -->
-                <svg viewBox="0 0 512 512"><path d="M256 0c-44.2 0-80 35.8-80 80 0 14.5 3.9 28 10.6 39.8-31 7.4-58.7 26.6-76.3 54.7-22.3 35.8-23.7 81.3-4.1 118.4 20 37.8 59.8 59.1 102.6 59.1 18.2 0 35.8-3.9 51.9-10.9-8.4 33.1-6.7 69 7.4 100.9 9.3 21 23 39.8 40.5 54.8 6.5-12.8 13.9-25.1 22.1-36.8C359 423.8 384 374.8 384 320c0-61.9-35.3-115.6-86.8-141.7 5.7-16.7 8.8-34.5 8.8-53.3C306 85.3 283.6 50.8 256 0z"/></svg>
+                <!-- SVG Corona -->
+                <svg viewBox="0 0 512 512"><path d="M496 128v16a8 8 0 0 1-8 8h-24l-31.5 133.7-56-111.8a13 13 0 0 0-23.4 0L294 290.3l-28.7-162a12 12 0 0 0-23.6 0l-28.7 162-59.1-115.8a13 13 0 0 0-23.4 0L75.5 285.7 44 152h-24a8 8 0 0 1-8-8v-16a8 8 0 0 1 8-8h51.3a8 8 0 0 1 7.8 6.2l30 144 57.2-111.8a13 13 0 0 1 23.4 0l60.2 118 29.5-167.3a12 12 0 0 1 23.6 0l29.5 167.3 60.2-118a13 13 0 0 1 23.4 0l57.2 111.8 30-144a8 8 0 0 1 7.8-6.2H488a8 8 0 0 1 8 8zM16 352h480v16a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8v-16zm0 48h480v48a16 16 0 0 1-16 16H32a16 16 0 0 1-16-16v-48z"/></svg>
             </div>
             <div class="envelope"></div>
         </div>
-        
         <div class="hint-text" style="position: relative; z-index: 10;">Tocar para abrir la magia</div>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    <!-- CONTENIDO PRINCIPAL (Fondo f2.jpg se aplica aquí) -->
     <main id="main-invitation">
         
         <!-- Portada -->
         <section class="section-block bg-cream">
-            <div class="anim-element anim-fade-up delay-1 tag-line">Mis XV Años</div>
-            <h1 class="anim-element anim-zoom delay-2 title-script glow-text">Amy Arlette</h1>
-            <div class="anim-element anim-fade-up delay-3 line-divider"></div>
-            <p class="anim-element anim-fade-up delay-4 body-serif">
+            <img src="assets/flores1.png" class="floral-corner" style="top: 0; left: 0;" alt="" onerror="this.style.display='none'">
+            <img src="assets/flores2.png" class="floral-corner" style="bottom: 0; right: 0; transform: rotate(180deg);" alt="" onerror="this.style.display='none'">
+
+            <div class="anim-element delay-1 tag-line">Mis XV Años</div>
+            <h1 class="anim-element delay-2 title-script glow-text">Amy Arlette</h1>
+            <div class="anim-element delay-3 line-divider"></div>
+            <p class="anim-element delay-4 body-serif">
                 "Te invito a ser nuestro huésped en esta noche mágica, donde los sueños se hacen realidad y comienza mi propio cuento de hadas."
             </p>
-            <div class="anim-element anim-fade-up delay-4 photo-frame">
-                <!-- Placeholder Foto Quinceañera -->
+            <div class="anim-element delay-4 photo-frame">
                 <img src="assets/foto1.jpg" alt="Amy Arlette" onerror="this.style.display='none'">
             </div>
         </section>
 
-        <!-- Padres y Padrinos (Sección Oscura) -->
+        <!-- Padres y Padrinos -->
         <section class="section-block bg-dark">
-            <!-- Efecto Mágico -->
             <div class="magic-sparkle" style="top: 10%; left: 20%; width: 5px; height: 5px;"></div>
-            <div class="magic-sparkle" style="top: 50%; right: 15%; width: 8px; height: 8px; animation-delay: 1s;"></div>
-            <div class="magic-sparkle" style="bottom: 20%; left: 30%; width: 6px; height: 6px; animation-delay: 2s;"></div>
+            <div class="magic-sparkle" style="bottom: 20%; right: 15%; width: 8px; height: 8px; animation-delay: 1s;"></div>
 
-            <div class="anim-element anim-fade-up delay-1 info-title">Con el amor de mi madre</div>
-            <div class="anim-element anim-fade-up delay-2 info-data">Guadalupe Velazquez Mendiola</div>
+            <div class="anim-element delay-1 info-title">Con el amor de mi madre</div>
+            <div class="anim-element delay-2 info-data glow-text">Guadalupe Velazquez Mendiola</div>
             
-            <div class="anim-element anim-zoom delay-3 line-horizontal"></div>
+            <div class="anim-element delay-3 line-horizontal"></div>
             
-            <div class="anim-element anim-fade-up delay-4 info-title">Y mis Padrinos</div>
-            <div class="anim-element anim-fade-up delay-4 info-data" style="font-size: 28px;">Pedro Luis López Castillo</div>
-            <div class="anim-element anim-fade-up delay-4" style="font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold-primary); margin: 10px 0;">&</div>
-            <div class="anim-element anim-fade-up delay-4 info-data" style="font-size: 28px;">Alma López Castillo</div>
+            <div class="anim-element delay-4 info-title">Y mis Padrinos</div>
+            <div class="anim-element delay-4 info-data" style="font-size: 32px;">Pedro Luis López Castillo</div>
+            <div class="anim-element delay-4" style="font-family: 'Cinzel', serif; font-size: 20px; color: var(--gold-primary); margin: 10px 0;">&</div>
+            <div class="anim-element delay-4 info-data" style="font-size: 32px;">Alma López Castillo</div>
         </section>
 
-        <!-- Fecha y Lugar -->
+        <!-- Fecha, Cuenta Regresiva y Calendario -->
         <section class="section-block bg-cream">
-            <div class="anim-element anim-fade-up delay-1 info-title">Celebraremos el día</div>
-            <div class="anim-element anim-fade-up delay-2 info-data glow-text" style="font-size: 45px; font-family: 'Cinzel', serif; font-weight: 700;">30 / 10 / 2026</div>
-            <div class="anim-element anim-fade-up delay-3 info-data" style="font-size: 24px; color: var(--gold-primary); letter-spacing: 2px;">Viernes</div>
+            <img src="assets/flores1.png" class="floral-corner" style="top: 10%; right: -20px; transform: rotate(-45deg);" alt="" onerror="this.style.display='none'">
 
-            <div class="anim-element anim-zoom delay-4 line-horizontal" style="margin-top: 50px;"></div>
+            <div class="anim-element delay-1 info-title">Celebraremos el día</div>
+            <div class="anim-element delay-2 info-data" style="font-size: 45px; font-family: 'Cinzel', serif; font-weight: 700;">30 / 10 / 2026</div>
+            <div class="anim-element delay-3 info-data" style="font-size: 24px; color: var(--gold-primary); letter-spacing: 2px;">Viernes</div>
 
-            <!-- Ceremonia -->
-            <div class="anim-element anim-fade-up delay-1 info-title" style="margin-top: 20px;">Ceremonia Religiosa</div>
-            <div class="anim-element anim-fade-up delay-2 info-data">Parroquia San Francisco de Asis</div>
-            <div class="anim-element anim-fade-up delay-3 tag-line" style="font-size: 16px; margin: 15px 0; color: var(--text-dark);">5:00 p.m.</div>
+            <!-- Cuenta Regresiva -->
+            <div class="anim-element delay-3 countdown-container">
+                <div class="countdown-item"><span class="countdown-num" id="cd-days">00</span><span class="countdown-label">Días</span></div>
+                <div class="countdown-num" style="font-size: 30px; margin-top: 5px;">:</div>
+                <div class="countdown-item"><span class="countdown-num" id="cd-hours">00</span><span class="countdown-label">Hrs</span></div>
+                <div class="countdown-num" style="font-size: 30px; margin-top: 5px;">:</div>
+                <div class="countdown-item"><span class="countdown-num" id="cd-mins">00</span><span class="countdown-label">Min</span></div>
+            </div>
+
+            <!-- Calendario -->
+            <div class="anim-element delay-4 calendar-wrapper">
+                <div class="calendar-month">Octubre 2026</div>
+                <div class="calendar-grid">
+                    <div class="cal-header">D</div><div class="cal-header">L</div><div class="cal-header">M</div><div class="cal-header">M</div><div class="cal-header">J</div><div class="cal-header">V</div><div class="cal-header">S</div>
+                    <div></div><div></div><div></div><div></div><div class="cal-day">1</div><div class="cal-day">2</div><div class="cal-day">3</div>
+                    <div class="cal-day">4</div><div class="cal-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day">8</div><div class="cal-day">9</div><div class="cal-day">10</div>
+                    <div class="cal-day">11</div><div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day">15</div><div class="cal-day">16</div><div class="cal-day">17</div>
+                    <div class="cal-day">18</div><div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div><div class="cal-day">24</div>
+                    <div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day active">30</div><div class="cal-day">31</div>
+                </div>
+            </div>
+
+            <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=XV+A%C3%B1os+de+Amy+Arlette&dates=20261030T230000Z/20261031T060000Z&details=Noche+m%C3%A1gica+de+celebraci%C3%B3n" target="_blank" class="anim-element delay-4 btn-solid">Agendar Evento</a>
+
+            <div class="anim-element line-horizontal" style="margin: 60px auto;"></div>
+
+            <!-- Ceremonia y Recepción -->
+            <div class="anim-element delay-1 info-title">Ceremonia Religiosa</div>
+            <div class="anim-element delay-2 info-data">Parroquia San Francisco de Asis</div>
+            <div class="anim-element delay-3 tag-line" style="font-size: 16px; margin: 15px 0; color: var(--text-dark);">5:00 p.m.</div>
             
-            <div class="anim-element anim-zoom delay-4 map-box">
+            <div class="anim-element delay-4 map-box">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3821809.576367878!2d-108.8534163875!3d20.700642600000005!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x84267271a0294d95%3A0xdd2dd176aeeba9a2!2sParroquia%20San%20Francisco%20de%20As%C3%ADs!5e0!3m2!1ses-419!2smx!4v1790731119299!5m2!1ses-419!2smx" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
             </div>
-            <a href="https://maps.app.goo.gl/cPEq3o4yYaQFCbUZ6?g_st=ic" target="_blank" class="anim-element anim-fade-up delay-4 btn-solid">Ver Mapa Ceremonia</a>
+            <a href="https://maps.app.goo.gl/cPEq3o4yYaQFCbUZ6?g_st=ic" target="_blank" class="anim-element delay-4 btn-solid">Ver Mapa Ceremonia</a>
 
-            <div class="anim-element anim-zoom line-horizontal" style="margin: 60px auto;"></div>
+            <div class="anim-element line-horizontal" style="margin: 60px auto;"></div>
 
-            <!-- Recepción -->
-            <div class="anim-element anim-fade-up delay-1 info-title">Recepción</div>
-            <div class="anim-element anim-fade-up delay-2 info-data">Terraza La Antigua <br><span style="font-size: 24px; color: var(--text-muted);">(La Estación)</span></div>
-            <div class="anim-element anim-fade-up delay-3 tag-line" style="font-size: 16px; margin: 15px 0; color: var(--text-dark);">7:00 p.m.</div>
+            <div class="anim-element delay-1 info-title">Recepción</div>
+            <div class="anim-element delay-2 info-data">Terraza La Antigua <br><span style="font-size: 24px; color: var(--text-muted);">(La Estación)</span></div>
+            <div class="anim-element delay-3 tag-line" style="font-size: 16px; margin: 15px 0; color: var(--text-dark);">7:00 p.m.</div>
             
-            <div class="anim-element anim-zoom delay-4 map-box">
+            <div class="anim-element delay-4 map-box">
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3732.361626220124!2d-103.97706269999999!3d20.695534900000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x84267315cfe58199%3A0xaac54767766cf1ab!2sTerraza%20La%20Antigua!5e0!3m2!1ses-419!2smx!4v1790731435968!5m2!1ses-419!2smx" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
             </div>
-            <a href="https://maps.app.goo.gl/NYonWfVY3cAqLMZu9?g_st=ic" target="_blank" class="anim-element anim-fade-up delay-4 btn-solid">Ver Mapa Recepción</a>
+            <a href="https://maps.app.goo.gl/NYonWfVY3cAqLMZu9?g_st=ic" target="_blank" class="anim-element delay-4 btn-solid">Ver Mapa Recepción</a>
         </section>
 
-        <!-- Itinerario (Sección Oscura) -->
+        <!-- Itinerario Vertical Elegante -->
         <section class="section-block bg-dark">
-            <!-- Efectos Mágicos -->
             <div class="magic-sparkle" style="top: 20%; left: 10%; width: 7px; height: 7px; animation-delay: 0.5s;"></div>
             <div class="magic-sparkle" style="bottom: 30%; right: 10%; width: 5px; height: 5px; animation-delay: 1.5s;"></div>
 
-            <div class="anim-element anim-fade-up delay-1 info-title">El Cuento de Hoy</div>
-            <div class="anim-element anim-fade-up delay-2 info-data glow-text" style="font-size: 45px;">Itinerario</div>
+            <div class="anim-element delay-1 info-title">El Cuento de Hoy</div>
+            <div class="anim-element delay-2 info-data glow-text" style="font-size: 55px;">Itinerario</div>
 
-            <div class="anim-element anim-fade-up delay-3 itinerary-grid">
-                <!-- Misa -->
-                <div class="itinerary-item">
-                    <div class="itinerary-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 2L2 12h3v8h14v-8h3L12 2zm0 2.8L17.2 10H6.8L12 4.8zM12 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
+            <div class="anim-element delay-3 timeline-container">
+                <div class="timeline-line"></div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 12h3v8h14v-8h3L12 2zm0 2.8L17.2 10H6.8L12 4.8zM12 11c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">5:00 P.M.</div>
+                        <div class="timeline-desc">Ceremonia Religiosa (Misa)</div>
                     </div>
-                    <div class="itinerary-time">5:00 P.M.</div>
-                    <div class="itinerary-desc">Ceremonia Religiosa (Misa)</div>
                 </div>
-                <!-- Recepción -->
-                <div class="itinerary-item">
-                    <div class="itinerary-icon">
-                        <svg viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon"><svg viewBox="0 0 24 24"><path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/></svg></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">7:00 P.M.</div>
+                        <div class="timeline-desc">Recepción</div>
                     </div>
-                    <div class="itinerary-time">7:00 P.M.</div>
-                    <div class="itinerary-desc">Recepción</div>
                 </div>
-                <!-- Banquete -->
-                <div class="itinerary-item">
-                    <div class="itinerary-icon">
-                        <svg viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon"><svg viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">8:00 P.M.</div>
+                        <div class="timeline-desc">Banquete</div>
                     </div>
-                    <div class="itinerary-time">8:00 P.M.</div>
-                    <div class="itinerary-desc">Banquete</div>
                 </div>
-                <!-- Vals -->
-                <div class="itinerary-item">
-                    <div class="itinerary-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1.5-3.5l5.5-5.5-1.41-1.41L10.5 13.67l-2.09-2.09L7 13l3.5 3.5z"/></svg>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1.5-3.5l5.5-5.5-1.41-1.41L10.5 13.67l-2.09-2.09L7 13l3.5 3.5z"/></svg></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">9:00 P.M.</div>
+                        <div class="timeline-desc">Vals</div>
                     </div>
-                    <div class="itinerary-time">9:00 P.M.</div>
-                    <div class="itinerary-desc">Vals</div>
                 </div>
-                <!-- Baile -->
-                <div class="itinerary-item">
-                    <div class="itinerary-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">10:00 P.M.</div>
+                        <div class="timeline-desc">Baile</div>
                     </div>
-                    <div class="itinerary-time">10:00 P.M.</div>
-                    <div class="itinerary-desc">Baile</div>
                 </div>
             </div>
         </section>
 
-        <!-- Dress Code (Rojo / Dorado) -->
+        <!-- Dress Code -->
         <section class="section-block bg-red">
-            <div class="anim-element anim-fade-up delay-1 info-title">Dress Code</div>
-            <div class="anim-element anim-fade-up delay-2 info-data glow-text" style="font-family: 'Cinzel', serif; font-size: 40px; margin: 25px 0; letter-spacing: 5px;">
+            <div class="anim-element delay-1 info-title" style="color: var(--gold-light);">Dress Code</div>
+            <div class="anim-element delay-2 info-data glow-text" style="font-family: 'Cinzel', serif; font-size: 50px; margin: 25px 0; letter-spacing: 5px; color: #fff;">
                 FORMAL
             </div>
-            <div class="anim-element anim-fade-up delay-3 line-divider" style="background-color: var(--gold-light); height: 40px;"></div>
-            <p class="anim-element anim-fade-up delay-4 body-serif" style="font-size: 21px; max-width: 500px;">
+            <div class="anim-element delay-3 line-divider" style="background-color: var(--gold-light); height: 40px;"></div>
+            <p class="anim-element delay-4 body-serif" style="font-size: 21px; max-width: 500px; color: #f9f9f9;">
                 Para mantener la magia de la noche, se solicita amablemente asistir de etiqueta formal.
                 <br><br>
-                <span style="font-weight: 500; font-family: 'Montserrat', sans-serif; font-style: normal; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light);">
+                <span style="font-weight: 500; font-family: 'Montserrat', sans-serif; font-style: normal; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light);">
                     * Favor de reservar los colores Dorado y Rojo para la quinceañera *
                 </span>
             </p>
         </section>
 
-        <!-- Mesa de Regalos -->
+        <!-- Mesa de Regalos / Playlist / Galería -->
         <section class="section-block bg-cream">
-            <div class="anim-element anim-fade-up delay-1 info-title">Sugerencia de Regalo</div>
-            <svg class="anim-element anim-zoom delay-2" viewBox="0 0 24 24" style="width: 55px; height: 55px; fill: var(--gold-primary); margin: 20px 0; filter: drop-shadow(0 4px 6px rgba(212,175,55,0.4));">
+            <img src="assets/flores2.png" class="floral-corner" style="top: 15%; left: -20px; transform: rotate(45deg);" alt="" onerror="this.style.display='none'">
+
+            <!-- Regalos -->
+            <div class="anim-element delay-1 info-title">Sugerencia de Regalo</div>
+            <svg class="anim-element delay-2" viewBox="0 0 24 24" style="width: 55px; height: 55px; fill: var(--gold-primary); margin: 20px 0; filter: drop-shadow(0 4px 6px rgba(212,175,55,0.4));">
                 <path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
             </svg>
-            <div class="anim-element anim-fade-up delay-3 info-data" style="font-size: 40px;">Obsequios y Lluvia de Sobres</div>
-            <p class="anim-element anim-fade-up delay-4 body-serif" style="margin-top: 25px; font-size: 22px;">
+            <div class="anim-element delay-3 info-data" style="font-size: 40px;">Obsequios y Lluvia de Sobres</div>
+            <p class="anim-element delay-4 body-serif" style="margin-top: 25px; font-size: 22px;">
                 El obsequio más hermoso es tu presencia y compartir conmigo esta noche mágica. 
                 Sin embargo, si deseas tener un detalle adicional, contaremos con un espacio especial en la recepción para obsequios físicos y un cofre para lluvia de sobres.
             </p>
-        </section>
 
-        <!-- Playlist (Sección Oscura) -->
-        <section class="section-block bg-dark">
-            <div class="magic-sparkle" style="top: 15%; right: 20%; width: 6px; height: 6px; animation-delay: 0.2s;"></div>
+            <div class="anim-element line-horizontal" style="margin: 60px auto;"></div>
 
-            <div class="anim-element anim-fade-up delay-1 info-title">Música</div>
-            <div class="anim-element anim-fade-up delay-2 info-data glow-text" style="font-size: 45px;">Nuestra Playlist</div>
-            <p class="anim-element anim-fade-up delay-3 body-serif" style="margin: 20px auto 40px auto; font-size: 22px;">
+            <!-- Playlist -->
+            <div class="anim-element delay-1 info-title">Música</div>
+            <div class="anim-element delay-2 info-data" style="font-size: 45px;">Nuestra Playlist</div>
+            <p class="anim-element delay-3 body-serif" style="margin: 20px auto 40px auto; font-size: 22px;">
                 Ayúdame a crear el ambiente perfecto agregando tus canciones favoritas al gran baile.
             </p>
-            
-            <div class="anim-element anim-zoom delay-4" style="width: 100%; max-width: 480px; position: relative; z-index: 2;">
-                <iframe data-testid="embed-iframe" style="border-radius:12px; box-shadow: 0 10px 30px rgba(212,175,55,0.2);" src="https://open.spotify.com/embed/playlist/6wS8q1p2zpDEUwaAOwdwQi?utm_source=generator&si=8a4f68e31e664625" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <div class="anim-element delay-4" style="width: 100%; max-width: 480px; position: relative; z-index: 2;">
+                <iframe data-testid="embed-iframe" style="border-radius:12px; box-shadow: 0 15px 40px rgba(0,0,0,0.1);" src="https://open.spotify.com/embed/playlist/6wS8q1p2zpDEUwaAOwdwQi?utm_source=generator&si=8a4f68e31e664625" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
-            
-            <a href="https://open.spotify.com/playlist/6wS8q1p2zpDEUwaAOwdwQi?si=51e8b6167bab414c&pt=5b7dbaf55885e7bf5f5a8667d48b244f" target="_blank" class="anim-element anim-fade-up delay-4 btn-solid">Agregar Canciones</a>
-        </section>
+            <a href="https://open.spotify.com/playlist/6wS8q1p2zpDEUwaAOwdwQi?si=51e8b6167bab414c&pt=5b7dbaf55885e7bf5f5a8667d48b244f" target="_blank" class="anim-element delay-4 btn-solid">Agregar Canciones</a>
 
-        <!-- Galería -->
-        <section class="section-block bg-cream">
-            <div class="anim-element anim-fade-up delay-1 info-title">Recuerdos Mágicos</div>
-            <div class="anim-element anim-fade-up delay-2 info-data" style="font-size: 40px;">Galería en Vivo</div>
-            <p class="anim-element anim-fade-up delay-3 body-serif" style="margin: 25px auto; font-size: 22px;">
-                Captura la magia de esta noche. Comparte todas las fotos y videos que tomes directamente en nuestro álbum digital para guardarlos por siempre.<br><br>
-                <span style="font-size: 14px; font-family: 'Montserrat', sans-serif; font-style: normal; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">
-                    Puedes subir tus archivos a través de Google Drive.
-                </span>
+            <div class="anim-element line-horizontal" style="margin: 60px auto;"></div>
+
+            <!-- Galeria -->
+            <div class="anim-element delay-1 info-title">Recuerdos Mágicos</div>
+            <div class="anim-element delay-2 info-data" style="font-size: 40px;">Galería en Vivo</div>
+            <p class="anim-element delay-3 body-serif" style="margin: 25px auto; font-size: 22px;">
+                Captura la magia de esta noche. Comparte todas las fotos y videos que tomes directamente en nuestro álbum digital para guardarlos por siempre.
             </p>
-            <a href="https://drive.google.com/drive/folders/1eEW-irEXy5IEsgLK4xZod_kjAtckdxbk?usp=sharing" target="_blank" class="anim-element anim-fade-up delay-4 btn-solid">Subir mis Fotos</a>
+            <a href="https://drive.google.com/drive/folders/1eEW-irEXy5IEsgLK4xZod_kjAtckdxbk?usp=sharing" target="_blank" class="anim-element delay-4 btn-solid">Subir mis Fotos</a>
         </section>
 
-        <!-- RSVP y Pases (Sección Oscura) -->
+        <!-- RSVP y Pases -->
         <section class="section-block bg-dark">
             <div class="magic-sparkle" style="top: 5%; left: 10%; width: 8px; height: 8px;"></div>
-            <div class="magic-sparkle" style="bottom: 5%; right: 10%; width: 10px; height: 10px; animation-delay: 1s;"></div>
-
-            <!-- Tarjeta VIP Dinámica Invytia -->
+            
             <div id="pases-section" style="display: none; width: 100%;">
-                <div class="anim-element anim-fade-up delay-1 info-title">Acceso al Evento</div>
-                <div class="anim-element anim-zoom delay-2 ticket-card">
+                <div class="anim-element delay-1 info-title">Acceso al Evento</div>
+                <div class="anim-element delay-2 ticket-card">
                     <div class="tag-line" style="margin-bottom: 20px; color: var(--gold-light);">Pase Real</div>
-                    
-                    <div style="font-family: 'Great Vibes', cursive; font-size: 38px; color: var(--gold-primary); margin-bottom: 15px; font-weight: 400; line-height: 1.2; text-shadow: 0 0 10px rgba(212,175,55,0.4);">
+                    <div style="font-family: 'Great Vibes', cursive; font-size: 42px; color: var(--gold-primary); margin-bottom: 15px; font-weight: 400; line-height: 1.2; text-shadow: 0 0 10px rgba(212,175,55,0.4);">
                         Invitado de Honor
                     </div>
-
                     <div class="body-serif" style="font-size: 21px; margin-bottom: 15px; color: #fff;">Pases Asignados</div>
-                    <div id="ticket-count" class="glow-text" style="font-family: 'Cinzel', serif; font-size: 70px; font-weight: 700; color: var(--gold-primary); line-height: 1;">
+                    <div id="ticket-count" class="glow-text" style="font-family: 'Cinzel', serif; font-size: 75px; font-weight: 700; color: var(--gold-primary); line-height: 1;">
                         0
                     </div>
                     <div style="font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; color: #999; margin-top: 35px;">
                         Presenta esta pantalla al llegar
                     </div>
                 </div>
-                <div class="anim-element anim-fade-up line-horizontal" style="margin: 60px auto;"></div>
+                <div class="anim-element line-horizontal" style="margin: 60px auto;"></div>
             </div>
 
-            <!-- Formulario RSVP -->
-            <div class="anim-element anim-fade-up delay-1 info-title">RSVP</div>
-            <div class="anim-element anim-fade-up delay-2 info-data glow-text" style="font-size: 40px;">Confirmar Asistencia</div>
-            <p class="anim-element anim-fade-up delay-3 body-serif" style="margin: 15px auto 35px auto; font-size: 22px;">
+            <div class="anim-element delay-1 info-title">RSVP</div>
+            <div class="anim-element delay-2 info-data glow-text" style="font-size: 45px;">Confirmar Asistencia</div>
+            <p class="anim-element delay-3 body-serif" style="margin: 15px auto 35px auto; font-size: 22px;">
                 Agradeceré tu confirmación a este cuento de hadas lo antes posible.
             </p>
             
-            <div class="anim-element anim-fade-up delay-4 form-group">
+            <div class="anim-element delay-4 form-group">
                 <input type="text" id="rsvp-name" class="input-line" placeholder="Tu nombre y apellido">
             </div>
-            <div class="anim-element anim-fade-up delay-4 form-group">
+            <div class="anim-element delay-4 form-group">
                 <select id="rsvp-status" class="input-line">
                     <option value="" disabled selected style="color: #666;">¿Nos acompañarás?</option>
                     <option value="yes">Con gusto asistiré</option>
                     <option value="no">No me será posible asistir</option>
                 </select>
             </div>
-            
-            <div class="anim-element anim-fade-up delay-4 form-group">
+            <div class="anim-element delay-4 form-group">
                 <select id="rsvp-guests" class="input-line" style="display: none;">
                     <option value="" disabled selected>¿Cuántas personas asisten?</option>
-                    <!-- Opciones dinámicas -->
                 </select>
             </div>
             
-            <button onclick="sendRSVP()" class="anim-element anim-fade-up delay-4 btn-solid" style="margin-bottom: 70px;">Confirmar por WhatsApp</button>
+            <button onclick="sendRSVP()" class="anim-element delay-4 btn-solid" style="margin-bottom: 70px;">Confirmar por WhatsApp</button>
 
-            <div class="anim-element anim-zoom line-divider"></div>
+            <div class="anim-element line-divider"></div>
 
-            <!-- Muro de Deseos -->
-            <div class="anim-element anim-fade-up delay-1 info-title">Mensajes</div>
-            <div class="anim-element anim-fade-up delay-2 info-data glow-text" style="font-size: 40px;">Muro de los Deseos</div>
-            <div class="anim-element anim-fade-up delay-3 form-group" style="margin-top: 30px;">
+            <div class="anim-element delay-1 info-title">Mensajes</div>
+            <div class="anim-element delay-2 info-data glow-text" style="font-size: 45px;">Muro de los Deseos</div>
+            <div class="anim-element delay-3 form-group" style="margin-top: 30px;">
                 <input type="text" id="wish-name" class="input-line" placeholder="De parte de...">
             </div>
-            <div class="anim-element anim-fade-up delay-4 form-group">
+            <div class="anim-element delay-4 form-group">
                 <textarea id="wish-message" class="input-line" placeholder="Deja un mensaje mágico para Amy Arlette..."></textarea>
             </div>
-            <button onclick="sendWish()" class="anim-element anim-fade-up delay-4 btn-solid" style="margin-bottom: 50px;">Enviar Mensaje</button>
-            
+            <button onclick="sendWish()" class="anim-element delay-4 btn-solid" style="margin-bottom: 50px;">Enviar Mensaje</button>
         </section>
-
     </main>
 
     <script>
@@ -659,7 +599,7 @@
                     playIcon.style.display = 'none';
                     pauseIcon.style.display = 'block';
                 }).catch(e => {
-                    console.log("El navegador bloqueó el autoplay de audio.");
+                    console.log("Autoplay bloqueado.");
                     isMusicPlaying = false;
                     playIcon.style.display = 'block';
                     pauseIcon.style.display = 'none';
@@ -667,7 +607,7 @@
             }, 1000);
         }
 
-        // --- INTERSECTION OBSERVER (Animaciones On-Scroll) ---
+        // --- INTERSECTION OBSERVER (Animaciones Cinemáticas) ---
         document.addEventListener("DOMContentLoaded", () => {
             const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
             const observer = new IntersectionObserver((entries, observer) => {
@@ -680,14 +620,43 @@
             }, observerOptions);
 
             document.querySelectorAll('.anim-element').forEach(el => observer.observe(el));
+            
+            // Iniciar Cuenta Regresiva
+            iniciarCuentaRegresiva();
         });
+
+        // --- CUENTA REGRESIVA ---
+        function iniciarCuentaRegresiva() {
+            // 30 de Octubre 2026, 17:00 Hrs
+            const fechaEvento = new Date("October 30, 2026 17:00:00").getTime();
+            
+            const actualizar = setInterval(() => {
+                const ahora = new Date().getTime();
+                const diferencia = fechaEvento - ahora;
+
+                if (diferencia < 0) {
+                    clearInterval(actualizar);
+                    document.getElementById("cd-days").innerText = "00";
+                    document.getElementById("cd-hours").innerText = "00";
+                    document.getElementById("cd-mins").innerText = "00";
+                    return;
+                }
+
+                const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+
+                document.getElementById("cd-days").innerText = dias.toString().padStart(2, '0');
+                document.getElementById("cd-hours").innerText = horas.toString().padStart(2, '0');
+                document.getElementById("cd-mins").innerText = minutos.toString().padStart(2, '0');
+            }, 1000);
+        }
 
         // --- LÓGICA DEL SISTEMA DE PASES INVYTIA ---
         const urlParams = new URLSearchParams(window.location.search);
         let pasesAsignados = parseInt(urlParams.get('p') || urlParams.get('pases'));
-        const phoneNumber = "523861096534"; // Teléfono asignado
+        const phoneNumber = "523861096534"; 
 
-        // Si se define por URL la cantidad de pases, mostrar el boleto
         if (!isNaN(pasesAsignados) && pasesAsignados > 0) {
             const pasesSection = document.getElementById('pases-section');
             if (pasesSection) {
@@ -695,11 +664,9 @@
                 document.getElementById('ticket-count').innerText = pasesAsignados;
             }
         } else {
-            // Fallback general para selector
             pasesAsignados = 10; 
         }
 
-        // Dropdown de cantidad de invitados
         const rsvpStatus = document.getElementById("rsvp-status");
         const rsvpGuests = document.getElementById("rsvp-guests");
 
@@ -716,7 +683,7 @@
             }
         });
 
-        // --- ENVÍO DE ASISTENCIA A WHATSAPP ---
+        // --- ENVÍOS A WHATSAPP ---
         function sendRSVP() {
             const name = document.getElementById("rsvp-name").value.trim();
             const status = document.getElementById("rsvp-status").value;
@@ -740,7 +707,6 @@
             window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
         }
 
-        // --- ENVÍO DE MENSAJE DE DESEOS A WHATSAPP ---
         function sendWish() {
             const name = document.getElementById("wish-name").value.trim();
             const wish = document.getElementById("wish-message").value.trim();
